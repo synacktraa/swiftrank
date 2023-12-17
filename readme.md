@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://i.imgur.com/UkUGd5j.gif" alt="SwiftRank GIF">
+  <img src="https://i.imgur.com/MYThQ5c.gif" alt="SwiftRank GIF">
 </div>
 
 ---
@@ -124,12 +124,12 @@ pip install swiftrank
 
  Rerank contexts provided on stdin.
 
-╭─ Options ───────────────────────────────────────────────────────────────────────────────────────────────────────╮
-│ *  --query      -q      TEXT   query for reranking evaluation. [required]                                       │
-│    --threshold  -t      FLOAT  filter contexts using threshold.                                                 │
-│    --first      -f             get most relevant context.                                                       │
-│    --help       -h             Show this message and exit.                                                      │
-╰─────────────────────────────────────────────────────────────────────────────────────────────────────────────────╯
+╭─ Options ────────────────────────────────────────────────────────────────────╮
+│ *  --query      -q      TEXT   query for reranking evaluation. [required]    │
+│    --threshold  -t      FLOAT  filter contexts using threshold.              │
+│    --first      -f             get most relevant context.                    │
+│    --help       -h             Show this message and exit.                   │
+╰──────────────────────────────────────────────────────────────────────────────╯
 ```
 
 > Note: It only supports string data for now. I am planning to add support for more complex data structures (json, jsonl, yaml, ...).
@@ -156,7 +156,7 @@ pip install swiftrank
 - Using different model by setting `SWIFTRANK_MODEL` environment variable
   - Shell
     ```sh
-    SWIFTRANK_MODEL="ms-marco-MiniLM-L-12-v2"
+    export SWIFTRANK_MODEL="ms-marco-MiniLM-L-12-v2"
     ```
   - Powershell
     ```powershell

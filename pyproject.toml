@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "swiftrank"
-version = "0.1.0"
+version = "0.1.1"
 description = "Compact, ultra-fast SoTA reranker enhancing retrieval pipelines and terminal applications."
 authors = ["Harsh Verma <synacktra.work@gmail.com>"]
 license = "Apache Software License (Apache 2.0)"
