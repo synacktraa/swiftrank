@@ -120,37 +120,38 @@ pip install swiftrank
 ### CLI Usage 🤗
 
 ```
- Usage: swiftrank [OPTIONS]
+Usage: swiftrank COMMAND
 
- Rerank contexts provided on stdin.
+Rerank contexts provided on stdin.
 
-╭─ Options ────────────────────────────────────────────────────────────────────╮
-│ *  --query      -q      TEXT   query for reranking evaluation. [required]    │
-│    --threshold  -t      FLOAT  filter contexts using threshold.              │
-│    --first      -f             get most relevant context.                    │
-│    --help       -h             Show this message and exit.                   │
-╰──────────────────────────────────────────────────────────────────────────────╯
+╭─ Session Parameters ───────────────────────────────────────────╮
+│ *  --query      -q  query for reranking evaluation. [required] │
+│    --threshold  -t  filter contexts using threshold.           │
+│    --first      -f  get most relevant context.                 │
+│    --version        Display application version.               │
+│    --help       -h  Display this message and exit.             │
+╰────────────────────────────────────────────────────────────────╯
+╭─ Commands ─────────────────────────────────────────────────────╮
+│ process  STDIN processor. [ json | jsonl | yaml ]              │
+╰────────────────────────────────────────────────────────────────╯
 ```
-
-> Note: It only supports string data for now. I am planning to add support for more complex data structures (json, jsonl, yaml, ...).
 
 - Print most relevant context
   ```sh
-  cat contexts | swiftrank -q "Monogatari Series: Season 2" -f
+  cat files/contexts | swiftrank -q "Jujutsu Kaisen: Season 2" -f
   ```
   ```
-  Monogatari Series: Second Season
+  Jujutsu Kaisen 2nd Season
   ```
 
 - Filtering using threshold
   > piping the output to `fzf` provides with a selection menu
   ```sh
-  cat contexts | swiftrank -q "Monogatari Series: Season 2" -t 0.8 | fzf 
+  cat files/contexts | swiftrank -q "Jujutsu Kaisen: Season 2" -t 0.98 | fzf
   ```
   ```
-  Monogatari Series: Second Season
-  Ore Monogatari!!
-  Umi Monogatari: Anata ga Ite Kureta Koto
+  Jujutsu Kaisen 2nd Season
+  Jujutsu Kaisen 2nd Season Recaps
   ```
 
 - Using different model by setting `SWIFTRANK_MODEL` environment variable
@@ -163,19 +164,90 @@ pip install swiftrank
     $env:SWIFTRANK_MODEL = "ms-marco-MiniLM-L-12-v2"
     ```
   ```sh
-  cat contexts | swiftrank -q "Monogatari Series: Season 2"
+  cat files/contexts | swiftrank -q "Jujutsu Kaisen: Season 2" 
+  ```
+  ```
+  Jujutsu Kaisen 2nd Season
+  Jujutsu Kaisen 2nd Season Recaps
+  Jujutsu Kaisen
+  Jujutsu Kaisen 0 Movie
+  Jujutsu Kaisen Official PV
+  Shingeki no Kyojin Season 2
+  Shingeki no Kyojin Season 3 Part 2
+  Shingeki no Kyojin Season 3
+  Shingeki no Kyojin: The Final Season
+  Kimi ni Todoke 2nd Season
+  ```
+
+#### Handling Complex Data
+
+> Note: The schema closely resembles that of JQ, but employs a custom parser to avoid the hassle of installing JQ.
+
+```
+Usage: swiftrank process [OPTIONS]
+
+STDIN processor. [ json | jsonl | yaml ]
+
+╭─ Parameters ──────────────────────────────────────────────╮
+│ --pre   -r  schema for pre-processing input.              │
+│ --ctx   -c  schema for extracting context.                │
+│ --post  -p  schema for extracting field after reranking.  │
+╰───────────────────────────────────────────────────────────╯
+```
+
+
+- `json`
+  ```sh
+  cat files/contexts.json | swiftrank -q "Jujutsu Kaisen: Season 2" process -r ".categories[].items" -c '.name' -t 0.9  
+  ```
+  ```
+  Jujutsu Kaisen 2nd Season
+  Jujutsu Kaisen 2nd Season Recaps
+  Jujutsu Kaisen
+  Jujutsu Kaisen Official PV
+  Jujutsu Kaisen 0 Movie
+  ```
+
+  > Provide one field for reranking and retrieve a different field as the output using `--post/-p` option
+  ```sh
+  cat files/contexts.json | swiftrank -q "Jujutsu Kaisen: Season 2" process -r ".categories[].items" -c '.name' -p '.url' -f
+  ```
+  ```
+  https://myanimelist.net/anime/51009/Jujutsu_Kaisen_2nd_Season
+  ```
+
+- `yaml`
+  ```sh
+  cat files/contexts.yaml | swiftrank -q "Monogatari Series: Season 2" process -r ".categories[].items" -c '.name' -f
   ```
   ```
   Monogatari Series: Second Season
-  Umi Monogatari: Anata ga Ite Kureta Koto
-  Ore Monogatari!!
-  Owarimonogatari 2nd Season
-  Kizumonogatari III: Reiketsu-hen
-  Nisemonogatari
-  Kizumonogatari II: Nekketsu-hen
-  Hanamonogatari
-  Nekomonogatari: Kuro
-  Kizumonogatari I: Tekketsu-hen
+  ```
+
+  > Provide one field for reranking and receive a different field as the output using `--post/-p` option
+  ```sh
+  cat files/contexts.yaml | swiftrank -q "Monogatari Series: Season 2" process -r ".categories[].items" -c '.name' -p '.payload.status' -f
+  ```
+  ```
+  Finished Airing
+  ```
+
+> Json and Yaml lines doesn't require `--pre/-r` option, as they're by default loaded into an array object.
+
+- `jsonlines`
+  ```sh
+  cat files/contexts.jsonl | swiftrank -q "Monogatari Series: Season 2" process -c '.name' -p '.payload.aired' -f
+  ```
+  ```
+  Jul 7, 2013 to Dec 29, 2013
+  ```
+
+- `yamllines`
+  ```sh
+  cat files/contextlines.yaml | swiftrank -q "Monogatari Series: Season 2" process -c '.name' -f  
+  ```
+  ```
+  Monogatari Series: Second Season
   ```
 
 ---

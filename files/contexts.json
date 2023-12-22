@@ -1,0 +1,169 @@
+{
+    "categories": [
+        {
+            "type": "anime",
+            "items": [
+                {
+                    "id": 51009,
+                    "type": "anime",
+                    "name": "Jujutsu Kaisen 2nd Season",
+                    "url": "https:\/\/myanimelist.net\/anime\/51009\/Jujutsu_Kaisen_2nd_Season",
+                    "image_url": "https:\/\/cdn.myanimelist.net\/r\/116x180\/images\/anime\/1792\/138022.webp?s=23c8e1f59da54c7ada7d9e1ef70d2ed3",
+                    "thumbnail_url": "https:\/\/cdn.myanimelist.net\/r\/116x76\/images\/anime\/1792\/138022.webp?s=f67075d9be9295cc61c7d73e769fc366",
+                    "payload": {
+                        "media_type": "TV",
+                        "start_year": 2023,
+                        "aired": "Jul 6, 2023 to Dec 28, 2023",
+                        "score": "8.91",
+                        "status": "Currently Airing"
+                    },
+                    "es_score": 48.39549
+                },
+                {
+                    "id": 56243,
+                    "type": "anime",
+                    "name": "Jujutsu Kaisen 2nd Season Recaps",
+                    "url": "https:\/\/myanimelist.net\/anime\/56243\/Jujutsu_Kaisen_2nd_Season_Recaps",
+                    "image_url": "https:\/\/cdn.myanimelist.net\/r\/116x180\/images\/anime\/1190\/137716.webp?s=fb4aa9b58ca77384449504051e145caf",
+                    "thumbnail_url": "https:\/\/cdn.myanimelist.net\/r\/116x76\/images\/anime\/1190\/137716.webp?s=1e1be90ec1fd4878f22a4da956691eb7",
+                    "payload": {
+                        "media_type": "Special",
+                        "start_year": 2023,
+                        "aired": "Aug 11, 2023 to Aug 18, 2023",
+                        "score": "7.40",
+                        "status": "Finished Airing"
+                    },
+                    "es_score": 21.248209
+                },
+                {
+                    "id": 40748,
+                    "type": "anime",
+                    "name": "Jujutsu Kaisen",
+                    "url": "https:\/\/myanimelist.net\/anime\/40748\/Jujutsu_Kaisen",
+                    "image_url": "https:\/\/cdn.myanimelist.net\/r\/116x180\/images\/anime\/1171\/109222.webp?s=d6088e4642e0034c0d66422ee6b0e07d",
+                    "thumbnail_url": "https:\/\/cdn.myanimelist.net\/r\/116x76\/images\/anime\/1171\/109222.webp?s=6ab4e18dfc20e99070f5aca8875da988",
+                    "payload": {
+                        "media_type": "TV",
+                        "start_year": 2020,
+                        "aired": "Oct 3, 2020 to Mar 27, 2021",
+                        "score": "8.62",
+                        "status": "Finished Airing"
+                    },
+                    "es_score": 0.6155236
+                },
+                {
+                    "id": 48561,
+                    "type": "anime",
+                    "name": "Jujutsu Kaisen 0 Movie",
+                    "url": "https:\/\/myanimelist.net\/anime\/48561\/Jujutsu_Kaisen_0_Movie",
+                    "image_url": "https:\/\/cdn.myanimelist.net\/r\/116x180\/images\/anime\/1121\/119044.webp?s=e9d89163ac84db8c45146f8e6e99802f",
+                    "thumbnail_url": "https:\/\/cdn.myanimelist.net\/r\/116x76\/images\/anime\/1121\/119044.webp?s=db91552bd8b5d66c51101d53e9a9c764",
+                    "payload": {
+                        "media_type": "Movie",
+                        "start_year": 2021,
+                        "aired": "Dec 24, 2021",
+                        "score": "8.46",
+                        "status": "Finished Airing"
+                    },
+                    "es_score": 0.21387534
+                },
+                {
+                    "id": 38777,
+                    "type": "anime",
+                    "name": "Jujutsu Kaisen Official PV",
+                    "url": "https:\/\/myanimelist.net\/anime\/38777\/Jujutsu_Kaisen_Official_PV",
+                    "image_url": "https:\/\/cdn.myanimelist.net\/r\/116x180\/images\/anime\/1792\/96959.webp?s=92fc4e0303877320cac3e78017304e27",
+                    "thumbnail_url": "https:\/\/cdn.myanimelist.net\/r\/116x76\/images\/anime\/1792\/96959.webp?s=db6dcd2d8ddef06e4ff87bb22524805a",
+                    "payload": {
+                        "media_type": "ONA",
+                        "start_year": 2018,
+                        "aired": "Dec 3, 2018 to Dec 8, 2018",
+                        "score": "7.64",
+                        "status": "Finished Airing"
+                    },
+                    "es_score": 0.09326108
+                },
+                {
+                    "id": 40028,
+                    "type": "anime",
+                    "name": "Shingeki no Kyojin: The Final Season",
+                    "url": "https:\/\/myanimelist.net\/anime\/40028\/Shingeki_no_Kyojin__The_Final_Season",
+                    "image_url": "https:\/\/cdn.myanimelist.net\/r\/116x180\/images\/anime\/1000\/110531.webp?s=9e2c8131698526f8372d7c6bdd0103fc",
+                    "thumbnail_url": "https:\/\/cdn.myanimelist.net\/r\/116x76\/images\/anime\/1000\/110531.webp?s=9e4783b979652df6af47a10156f6c9d9",
+                    "payload": {
+                        "media_type": "TV",
+                        "start_year": 2020,
+                        "aired": "Dec 7, 2020 to Mar 29, 2021",
+                        "score": "8.79",
+                        "status": "Finished Airing"
+                    },
+                    "es_score": 0.08544179
+                },
+                {
+                    "id": 38524,
+                    "type": "anime",
+                    "name": "Shingeki no Kyojin Season 3 Part 2",
+                    "url": "https:\/\/myanimelist.net\/anime\/38524\/Shingeki_no_Kyojin_Season_3_Part_2",
+                    "image_url": "https:\/\/cdn.myanimelist.net\/r\/116x180\/images\/anime\/1517\/100633.webp?s=07fad2a17d399a7d360d2a9a90363609",
+                    "thumbnail_url": "https:\/\/cdn.myanimelist.net\/r\/116x76\/images\/anime\/1517\/100633.webp?s=b542ad2afe3358daf4f57a8cc0650289",
+                    "payload": {
+                        "media_type": "TV",
+                        "start_year": 2019,
+                        "aired": "Apr 29, 2019 to Jul 1, 2019",
+                        "score": "9.05",
+                        "status": "Finished Airing"
+                    },
+                    "es_score": 0.0786811
+                },
+                {
+                    "id": 9656,
+                    "type": "anime",
+                    "name": "Kimi ni Todoke 2nd Season",
+                    "url": "https:\/\/myanimelist.net\/anime\/9656\/Kimi_ni_Todoke_2nd_Season",
+                    "image_url": "https:\/\/cdn.myanimelist.net\/r\/116x180\/images\/anime\/1311\/121574.webp?s=503b1517448c56cb0ff4a193b6e47638",
+                    "thumbnail_url": "https:\/\/cdn.myanimelist.net\/r\/116x76\/images\/anime\/1311\/121574.webp?s=4bae97c7aafce7483d95a852b789bdab",
+                    "payload": {
+                        "media_type": "TV",
+                        "start_year": 2011,
+                        "aired": "Jan 12, 2011 to Mar 30, 2011",
+                        "score": "7.98",
+                        "status": "Finished Airing"
+                    },
+                    "es_score": 0.07251573
+                },
+                {
+                    "id": 25777,
+                    "type": "anime",
+                    "name": "Shingeki no Kyojin Season 2",
+                    "url": "https:\/\/myanimelist.net\/anime\/25777\/Shingeki_no_Kyojin_Season_2",
+                    "image_url": "https:\/\/cdn.myanimelist.net\/r\/116x180\/images\/anime\/4\/84177.webp?s=c27b14b372fd9c04caa18bf4d2889945",
+                    "thumbnail_url": "https:\/\/cdn.myanimelist.net\/r\/116x76\/images\/anime\/4\/84177.webp?s=084ce60ce9f588b08f911d6573129ad2",
+                    "payload": {
+                        "media_type": "TV",
+                        "start_year": 2017,
+                        "aired": "Apr 1, 2017 to Jun 17, 2017",
+                        "score": "8.51",
+                        "status": "Finished Airing"
+                    },
+                    "es_score": 0.06922075
+                },
+                {
+                    "id": 35760,
+                    "type": "anime",
+                    "name": "Shingeki no Kyojin Season 3",
+                    "url": "https:\/\/myanimelist.net\/anime\/35760\/Shingeki_no_Kyojin_Season_3",
+                    "image_url": "https:\/\/cdn.myanimelist.net\/r\/116x180\/images\/anime\/1173\/92110.webp?s=e4ee050bbe5d927b92da3a885b6565d6",
+                    "thumbnail_url": "https:\/\/cdn.myanimelist.net\/r\/116x76\/images\/anime\/1173\/92110.webp?s=73893cfe80621c3dbb537b6c7ff7d5e0",
+                    "payload": {
+                        "media_type": "TV",
+                        "start_year": 2018,
+                        "aired": "Jul 23, 2018 to Oct 15, 2018",
+                        "score": "8.62",
+                        "status": "Finished Airing"
+                    },
+                    "es_score": 0.066269204
+                }
+            ]
+        }
+    ]
+}
