@@ -1,3 +1,5 @@
+> This project is broken for now. Previously It was using @PrithivirajDamodaran hosted models(I had no idea that the models were being downloaded was stored on paid cloud and now he is very upset about it). Swiftrank will use models from Huggingface in new update. Thanks for understanding.
+
 <div align="center">
   <img src="https://i.imgur.com/MYThQ5c.gif" alt="SwiftRank GIF">
 </div>
