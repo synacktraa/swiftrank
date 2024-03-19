@@ -237,10 +237,10 @@ STDIN processor. [ json | jsonl | yaml ]
 
 - Want to filter contexts? Utilize `threshold` parameter.
   ```py
-  for mapping in reranker.invoke(
+  for ctx in reranker.invoke(
       query="Tricks to accelerate LLM inference", contexts=contexts, threshold=0.8
   ):
-      print(mapping)
+      print(ctx)
   ```
   ```
   Introduce *lookahead decoding*: - a parallel decoding algo to accelerate LLM inference - w/o the need for a draft model or a data store - linearly decreases # decoding steps relative to log(FLOPs) used per decoding step.
