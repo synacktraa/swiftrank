@@ -12,10 +12,11 @@ DEFAULT_CACHE_DIR = Path(os.getenv(
 DEFAULT_CACHE_DIR.mkdir(parents=True, exist_ok=True)
 
 MODEL_MAP = {
-    "ms-marco-TinyBERT-L-2-v2": "Point it to actual onnx format file",
-    "ms-marco-MiniLM-L-12-v2": "Point it to actual onnx format file",
-    "ms-marco-MultiBERT-L-12": "Point it to actual onnx format file",
-    "rank-T5-flan": "Point it to actual onnx format file"
+    "ms-marco-TinyBERT-L-2-v2": "flashrank-TinyBERT-L-2-v2.onnx",
+    "ms-marco-MiniLM-L-12-v2": "flashrank-MiniLM-L-12-v2_Q.onnx",
+    "ms-marco-MultiBERT-L-12": "flashrank-MultiBERT-L12_Q.onnx",
+    "rank-T5-flan": "flashrank-rankt5_Q.onnx",
+    "ce-esci-MiniLM-L12-v2": "flashrank-ce-esci-MiniLM-L12-v2_Q.onnx"
 }
 
 DEFAULT_MODEL = os.getenv("SWIFTRANK_MODEL", "ms-marco-TinyBERT-L-2-v2")
@@ -27,7 +28,7 @@ def get_model_path(model_id: str) -> Path:
         return model_dir 
 
     local_zip_file = str(DEFAULT_CACHE_DIR / f"{model_id}.zip")
-    model_url = f"https://some-url-to-model/{model_id}.zip"
+    model_url = f"https://huggingface.co/prithivida/flashrank/resolve/main/{model_id}.zip"
 
     with requests.get(model_url, stream=True) as r:
         r.raise_for_status()

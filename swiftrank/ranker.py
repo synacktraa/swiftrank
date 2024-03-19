@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from collections import OrderedDict
 from typing import (
-    overload, Any, Optional, Iterable, Protocol, Callable, TypeVar, TypedDict, Generator
+    overload, Any, Optional, Iterable, Callable, TypeVar
 )
 
 import numpy as np
@@ -12,20 +12,13 @@ from tokenizers import AddedToken, Tokenizer as TokenizerLoader
 from . import settings
 
 
-class SupportsGetItem(Protocol):
-    def __getitem__(self, key) -> str: ...
-
-_T = TypeVar("_T", bound=SupportsGetItem)
-
-class Mapping(TypedDict):
-    score: float
-    context: str
+_T = TypeVar("_T")
 
 
 class Ranker:
     """Load Ranker from available models."""
     def __init__(
-        self, model_id: str = settings.DEFAULT_MODEL, max_length: int = 512
+        self, model_id: str = settings.DEFAULT_MODEL
     ) -> None:
         self.model_id = model_id
         model_file = settings.MODEL_MAP.get(self.model_id)
@@ -108,14 +101,79 @@ class ReRankPipeline:
         self.ranker = ranker.instance
         self.tokenizer = tokenizer.instance
 
+    @classmethod
+    def from_model_id(cls, __id: str, tk_max_length: int = 512):
+        """
+        Create Reranker from model ID
+        @param __id: Model ID
+        @param tk_max_length: Max length for tokenizer
+        """
+        return cls(
+            ranker=Ranker(model_id=__id), 
+            tokenizer=Tokenizer(model_id=__id, max_length=tk_max_length)
+        )
+
     def __create_attr_array(self, tokenized, attr: str):
         """Create array of tokenized attribute values."""
         return np.array([getattr(_, attr) for _ in tokenized], dtype=np.int64)
 
     @overload
+    def invoke_with_score(
+        self, query: str, contexts: Iterable[str], threshold: Optional[float] = None
+    ) -> list[tuple[float, str]]:
+        """
+        Rerank contexts based on query.
+        :param query: The query to use for reranking evaluation.
+        :param contexts: The contexts to rerank.
+        :param threshold: Get contexts that are equal or higher than threshold value.
+        """
+    
+    @overload
+    def invoke_with_score(
+        self, query: str, contexts: Iterable[_T], threshold: Optional[float] = None, *, key: Callable[[_T], str]
+    ) -> list[tuple[float, _T]]:
+        """
+        Rerank contexts based on query.
+        :param query: The query to use for reranking evaluation.
+        :param contexts: The contexts object.
+        :param threshold: Get contexts that are equal or higher than threshold value.
+        :param key: callback to use for getting fields from contexts object.
+        """
+
+    def invoke_with_score(
+        self, 
+        query: str, 
+        contexts: Iterable, 
+        threshold: Optional[float] = None, 
+        *, 
+        key: Callable = None
+    ) -> list[tuple]:
+
+        processor = (lambda _:_) if key is None else key
+        tokenized = self.tokenizer.encode_batch(
+            [(query, processor(context)) for context in contexts])
+
+        onnx_input = {
+            "input_ids": self.__create_attr_array(tokenized, 'ids'),
+            "attention_mask": self.__create_attr_array(tokenized, 'attention_mask')}
+        token_type_ids = self.__create_attr_array(tokenized, 'type_ids')
+        use_type_ids = not np.all(token_type_ids == 0)
+        if use_type_ids:
+            onnx_input = onnx_input | {'token_type_ids': token_type_ids}
+
+        output = self.ranker.run(None, onnx_input)[0]
+        scores = list(1 / (1 + np.exp(
+            -(output[:, 1] if output.shape[1] > 1 else output.flatten()))))
+        combined = sorted(zip(scores, contexts), key=lambda x: x[0], reverse=True)
+
+        if threshold is None:
+            return [(sc, ctx) for sc, ctx in combined]
+        return [(sc, ctx) for sc, ctx in combined if sc >= threshold]
+
+    @overload
     def invoke(
         self, query: str, contexts: Iterable[str], threshold: Optional[float] = None
-    ) -> Generator[Mapping, None, None]:
+    ) -> list[str]:
         """
         Rerank contexts based on query.
         :param query: The query to use for reranking evaluation.
@@ -126,48 +184,23 @@ class ReRankPipeline:
     @overload
     def invoke(
         self, query: str, contexts: Iterable[_T], threshold: Optional[float] = None, *, key: Callable[[_T], str]
-    ) -> Generator[Mapping, None, None]:
+    ) -> list[_T]:
         """
         Rerank contexts based on query.
         :param query: The query to use for reranking evaluation.
         :param contexts: The contexts object.
         :param threshold: Get contexts that are equal or higher than threshold value.
-        :param key: function/method to use for getting fields from contexts object.
+        :param key: callback to use for getting fields from contexts object.
         """
 
     def invoke(
         self, 
         query: str, 
-        contexts: Iterable[str] | Iterable[_T], 
+        contexts: Iterable, 
         threshold: Optional[float] = None, 
         *, 
-        key: Callable[[_T], str] = None
-    ) -> Generator[Mapping, None, None]:
+        key: Callable = None
+    ) -> list:
 
-        processor = (lambda _:_) if key is None else key
-        tokenized = self.tokenizer.encode_batch(
-            [(query, processor(context)) for context in contexts]
-        )
-
-        onnx_input = {
-            "input_ids": self.__create_attr_array(tokenized, 'ids'),
-            "attention_mask": self.__create_attr_array(tokenized, 'attention_mask'),
-        }
-        token_type_ids = self.__create_attr_array(tokenized, 'type_ids')
-        use_type_ids = not np.all(token_type_ids == 0)
-        if use_type_ids:
-            onnx_input = onnx_input | {'token_type_ids': token_type_ids}
-
-        output = self.ranker.run(None, onnx_input)[0]
-        scores = list(1 / (1 + np.exp(
-            -(output[:, 1] if output.shape[1] > 1 else output.flatten())))
-        )
-        
-        combined = sorted(zip(scores, contexts), key=lambda x: x[0], reverse=True)
-
-        if threshold is None:
-            return ({'score': sc, "context": ctx} for sc, ctx in combined)
-        
-        return (
-            {'score': sc, "context": ctx} for sc, ctx in combined if sc >= threshold
-        )
+        return [context for _, context in self.invoke_with_score(
+            query=query, contexts=contexts, threshold=threshold, key=key)]
