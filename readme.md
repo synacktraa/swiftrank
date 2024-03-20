@@ -1,4 +1,4 @@
-> Important: Previously It was using [PrithivirajDamodaran](https://github.com/PrithivirajDamodaran) hosted models(I had no idea that the models were being downloaded was stored on paid cloud and now he is very upset about it). Swiftrank will use models from [Huggingface](https://huggingface.co/prithivida/flashrank) in new update. Thanks for understanding.
+> Swiftrank is now using flashrank int8 models from [Huggingface repository](https://huggingface.co/prithivida/flashrank)
 
 <div align="center">
   <img src="https://i.imgur.com/MYThQ5c.gif" alt="SwiftRank GIF">
@@ -298,3 +298,17 @@ STDIN processor. [ json | jsonl | yaml ]
 #### Acknowledgment of Original Repository
 
 This project is derived from [FlashRank](https://github.com/PrithivirajDamodaran/FlashRank), which is licensed under the Apache License 2.0. We extend our gratitude to the original authors and contributors for their work. The original repository provided a foundational framework for the development of our project, and we have built upon it with additional features and improvements.
+
+#### Citation
+
+```bibtex
+@software{Damodaran_FlashRank_Lightest_and_2023,
+author = {Damodaran, Prithiviraj},
+doi = {10.5281/zenodo.10426927},
+month = dec,
+title = {{FlashRank, Lightest and Fastest 2nd Stage Reranker for search pipelines.}},
+url = {https://github.com/PrithivirajDamodaran/FlashRank},
+version = {1.0.0},
+year = {2023}
+}
+```
