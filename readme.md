@@ -40,6 +40,9 @@
 ⌨️ **Terminal Integration**:
 - Pipe your output into `swiftrank` cli tool and get reranked output
 
+🌐 **API Integration**:
+- Deploy `swiftrank` as an API service for seamless integration into your workflow.
+
 ---
 
 ### 🚀 Installation 
@@ -57,6 +60,7 @@ Rerank contexts provided on stdin.
 
 ╭─ Commands ─────────────────────────────────────────────────────╮
 │ process    STDIN processor. [ json | jsonl | yaml ]            │
+│ serve      Startup a swiftrank server                          │
 │ --help,-h  Display this message and exit.                      │
 │ --version  Display application version.                        │
 ╰────────────────────────────────────────────────────────────────╯
@@ -179,6 +183,27 @@ STDIN processor. [ json | jsonl | yaml ]
   ```
   Monogatari Series: Second Season
   ```
+
+#### Startup a FastAPI server instance
+
+```
+Usage: swiftrank serve [OPTIONS]
+
+Startup a swiftrank server
+
+╭─ Parameters ──────────────────────────────╮
+│ --host  Host name [default: 0.0.0.0]      │
+│ --port  Port number. [default: 12345]     │
+╰───────────────────────────────────────────╯
+```
+
+```sh
+swiftrank serve
+```
+```
+[GET] /models - List Models
+[POST] /rerank - Rerank Endpoint
+```
 
 ### Library Usage 🤗
 

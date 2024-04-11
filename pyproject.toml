@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "swiftrank"
-version = "1.2.0"
+version = "1.3.0"
 description = "Compact, ultra-fast SoTA reranker enhancing retrieval pipelines and terminal applications."
 authors = ["Harsh Verma <synacktra.work@gmail.com>"]
 license = "Apache Software License (Apache 2.0)"
@@ -17,10 +17,17 @@ tqdm = "4.66.1"
 cyclopts = "2.1.2"
 pyyaml = "6.0.1"
 orjson = "3.9.10"
+pydantic = "2.6.4"
+fastapi = "0.110.1"
+uvicorn = "0.29.0"
 
 [tool.poetry.scripts]
-swiftrank = "swiftrank.cli:app.meta"
-srank = "swiftrank.cli:app.meta"
+swiftrank = "swiftrank.interface.cli:app.meta"
+srank = "swiftrank.interface.cli:app.meta"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "8.1.1"
+requests = "2.31.0"
 
 [build-system]
 requires = ["poetry-core"]

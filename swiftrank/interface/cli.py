@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from cyclopts import App, Parameter
+from cyclopts import App, Parameter, validators
 
 try:
 	from signal import signal, SIGPIPE, SIG_DFL
@@ -23,22 +23,25 @@ def build_processing_parameters(
         help="schema for extracting field after reranking.", show_default=False
     )] = None
 ):  
-    from .utils import object_parser, print_and_exit
+    from .utils import cli_object_parser, print_and_exit
     def preprocessor(_input: str):
         if _input.startswith(('{', '[')):
             from orjson import loads, JSONDecodeError
             try:
-                return object_parser(loads(_input), pre)
+                return cli_object_parser(loads(_input), pre)
             except JSONDecodeError:
-                from io import StringIO
-                with StringIO(_input) as handler:
-                    return list(map(loads, handler))
+                try:
+                    from io import StringIO
+                    with StringIO(_input) as handler:
+                        return list(map(loads, handler))
+                except (JSONDecodeError, Exception):
+                    print_and_exit("Input data format not valid.", code=1)
             except Exception:
-                print_and_exit("Malformed JSON object not parseable.", code=1)
+                print_and_exit("Input data format not valid.", code=1)
         
         import yaml    
         try:
-            return object_parser(yaml.safe_load(_input), pre)
+            return cli_object_parser(yaml.safe_load(_input), pre)
         except yaml.MarkedYAMLError:
             return list(yaml.safe_load_all(_input))
         except yaml.YAMLError:
@@ -53,11 +56,11 @@ def __entry__(
     query: Annotated[str, Parameter(
         name=("-q", "--query"), help="query for reranking evaluation.")],
     threshold: Annotated[float, Parameter(
-        name=("-t", "--threshold"), help="filter contexts using threshold.")] = None,
+        name=("-t", "--threshold"), help="filter contexts using threshold.", validator=validators.Number(gte=0.0, lte=1.0))] = None,
     first: Annotated[bool, Parameter(
         name=("-f", "--first"), help="get most relevant context.", negative="", show_default=False)] = False,
 ):
-    from .utils import read_stdin, object_parser, print_and_exit
+    from .utils import read_stdin, cli_object_parser, print_and_exit
     
     processing_params: dict = {}
     if tokens:
@@ -66,18 +69,17 @@ def __entry__(
         if not _input:
             return
         contexts = processing_params['preprocessor'](_input)
-            
     else:
         contexts = read_stdin(readlines=True)
 
     ctx_schema = processing_params.get('ctx_schema', '.')
-    if not isinstance(contexts, list):
-        print_and_exit(object_parser(contexts, ctx_schema))
+    post_schema = processing_params.get('post_schema') or ctx_schema
 
-    if not all(contexts):
-        print_and_exit("No contexts found on stdin", code=1)
-    if len(contexts) == 1:
-        print_and_exit(contexts[0])
+    if not isinstance(contexts, list):
+        print_and_exit(cli_object_parser(contexts, post_schema))
+
+    if not contexts:
+        print_and_exit("Nothing to rerank!", code=1)
 
     from .. import settings
     from ..ranker import ReRankPipeline
@@ -88,18 +90,32 @@ def __entry__(
             query=query, 
             contexts=contexts, 
             threshold=threshold, 
-            key=lambda x: object_parser(x, ctx_schema)
-        )
-    except TypeError:
-        print_and_exit(
-            'Context processing must result into string. Hint: `--ctx` flag might help.', code=1
+            key=lambda x: cli_object_parser(x, ctx_schema)
         )
 
-    post_schema = processing_params.get('post_schema') or ctx_schema
-    if reranked and first:
+        if reranked and first:
+            print_and_exit(
+                cli_object_parser(reranked[0], post_schema)
+            )
+            
+        for context in reranked:
+            print(cli_object_parser(context, post_schema))
+
+    except TypeError:
         print_and_exit(
-            object_parser(reranked[0], post_schema)
+            'Context processing must result into string.', code=1
         )
-        
-    for context in reranked:
-        print(object_parser(context, post_schema))
+
+@app.meta.command(name="serve", help="Startup a swiftrank server")
+def serve(
+    *, 
+    host: Annotated[str, Parameter(
+        name=('--host'), help="Host name")] = '0.0.0.0',
+    port: Annotated[int, Parameter(
+        name=('--port',), help="Port number.")] = 12345
+):
+    from .api import _serve
+    _serve(host=host, port=port)
+
+if __name__ == "__main__":
+    app.meta()

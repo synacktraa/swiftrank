@@ -1,22 +1,6 @@
 import sys
 from typing import TypeAlias, Any
 
-def print_and_exit(msg: str, code: int = 0):
-    stream = sys.stdout if not code else sys.stderr
-    print(msg, file=stream)
-    exit(code)
-
-def read_stdin(readlines: bool = False):
-    """Read values from standard input (stdin). """
-    if sys.stdin.isatty():
-        return
-    try:
-        if readlines is False:
-            return sys.stdin.read().rstrip('\n')
-        return [_.strip('\n') for _ in sys.stdin if _]
-    except KeyboardInterrupt:
-        return
-
 
 ObjectCollection: TypeAlias = dict[str, Any] | list[Any]
 ObjectScalar: TypeAlias = bool | float | int | str
@@ -33,7 +17,7 @@ def object_parser(obj: ObjectValue, schema: str) -> ObjectValue:
     if not re.match(
         pattern=r"^(?:(?:[.](?:[\w]+|\[\d?\]))+)$", string=usable_schema
     ):
-        print_and_exit(f'{schema!r} is not a valid schema.', code=1)
+        raise ValueError(f'{schema!r} is not a valid schema.')
 
     def __inner__(_in: ObjectValue, keys: list[str]):
         for idx, key in enumerate(keys):
@@ -48,7 +32,7 @@ def object_parser(obj: ObjectValue, schema: str) -> ObjectValue:
                     _in = _in[int(obj_idx)]
                     continue
             except (KeyError, IndexError):
-                print_and_exit(f'{schema!r} schema not compatible with input data.', code=1)
+                raise ValueError(f'{schema!r} schema not compatible with input data.')
 
             _keys = keys[idx + 1:]
             if not _keys:
@@ -59,3 +43,35 @@ def object_parser(obj: ObjectValue, schema: str) -> ObjectValue:
     return __inner__(
         obj, [k for k, _ in groupby(usable_schema.lstrip('.').split('.'))]
     )
+
+def read_stdin(readlines: bool = False):
+    """Read values from standard input (stdin). """
+    if sys.stdin.isatty():
+        return
+    try:
+        if readlines is False:
+            return sys.stdin.read().rstrip('\n')
+        return [_.strip('\n') for _ in sys.stdin if _]
+    except KeyboardInterrupt:
+        return
+    
+def print_and_exit(msg: str, code: int = 0):
+    stream = sys.stdout if not code else sys.stderr
+    print(msg, file=stream)
+    exit(code)
+
+def cli_object_parser(obj: ObjectValue, schema: str):
+    try:
+        return object_parser(obj=obj, schema=schema)
+    except ValueError as e:
+        print_and_exit(e.args[0], code=1)
+
+def api_object_parser(obj: ObjectValue, schema: str):
+    from fastapi import status, HTTPException
+    try:
+        return object_parser(obj=obj, schema=schema)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, 
+            detail=e.args[0]
+        )

@@ -2,7 +2,7 @@ import json
 from pathlib import Path
 from collections import OrderedDict
 from typing import (
-    overload, Any, Optional, Iterable, Callable, TypeVar
+    overload, cast, Any, Optional, Iterable, Callable, TypeVar
 )
 
 import numpy as np
@@ -66,9 +66,9 @@ class Tokenizer:
         tokenizer_config = self.__file_handler("tokenizer_config.json")
         tokens_map = self.__file_handler("special_tokens_map.json")
 
-        tokenizer: TokenizerLoader = TokenizerLoader.from_file(str(
+        tokenizer = cast(TokenizerLoader, TokenizerLoader.from_file(str(
             self.__file_handler("tokenizer.json", read_json=False)
-        ))
+        )))
         tokenizer.enable_truncation(max_length=min(tokenizer_config["model_max_length"], self.max_length))
         tokenizer.enable_padding(pad_id=config["pad_token_id"], pad_token=tokenizer_config["pad_token"])
 
@@ -88,18 +88,28 @@ class Tokenizer:
 class ReRankPipeline:
     """
     Pipeline for reranking task.
-    :param ranker: `Ranker` class instance
-    :param tokenizer: `Tokenizer` class instance
 
-    >>> from flashrank import ReRankPipeline
-    >>> pipeline = ReRankPipeline(ranker=ranker, tokenizer=tokenizer)
-    >>> pipeline.invoke(
-    ...     query="<query>", contexts=["<context1>", "<context2>", ...]    
-    ... )
+    Example:
+    ```python
+    from swiftrank import ReRankPipeline
+    pipeline = ReRankPipeline(ranker=ranker, tokenizer=tokenizer)
+    pipeline.invoke(
+        query="<query>", contexts=["<context1>", "<context2>", ...]    
+    )
+    ```
     """
-    def __init__(self, ranker: Ranker, tokenizer: Tokenizer) -> None:
-        self.ranker = ranker.instance
-        self.tokenizer = tokenizer.instance
+    def __init__(
+        self, 
+        ranker: Optional[Ranker] = None, 
+        tokenizer: Optional[Tokenizer] = None
+    ) -> None:
+        """
+        Initialize a rerank pipeline
+        @param ranker: `Ranker` class instance
+        @param tokenizer: `Tokenizer` class instance
+        """
+        self.ranker = (ranker or Ranker()).instance
+        self.tokenizer = (tokenizer or Tokenizer()).instance
 
     @classmethod
     def from_model_id(cls, __id: str, tk_max_length: int = 512):
@@ -123,9 +133,9 @@ class ReRankPipeline:
     ) -> list[tuple[float, str]]:
         """
         Rerank contexts based on query.
-        :param query: The query to use for reranking evaluation.
-        :param contexts: The contexts to rerank.
-        :param threshold: Get contexts that are equal or higher than threshold value.
+        @param query: The query to use for reranking evaluation.
+        @param contexts: The contexts to rerank.
+        @param threshold: Get contexts that are equal or higher than threshold value.
         """
     
     @overload
@@ -134,10 +144,10 @@ class ReRankPipeline:
     ) -> list[tuple[float, _T]]:
         """
         Rerank contexts based on query.
-        :param query: The query to use for reranking evaluation.
-        :param contexts: The contexts object.
-        :param threshold: Get contexts that are equal or higher than threshold value.
-        :param key: callback to use for getting fields from contexts object.
+        @param query: The query to use for reranking evaluation.
+        @param contexts: The contexts object.
+        @param threshold: Get contexts that are equal or higher than threshold value.
+        @param key: callback to use for getting fields from contexts object.
         """
 
     def invoke_with_score(
@@ -167,8 +177,8 @@ class ReRankPipeline:
         combined = sorted(zip(scores, contexts), key=lambda x: x[0], reverse=True)
 
         if threshold is None:
-            return [(sc, ctx) for sc, ctx in combined]
-        return [(sc, ctx) for sc, ctx in combined if sc >= threshold]
+            return [(float(sc), ctx) for sc, ctx in combined]
+        return [(float(sc), ctx) for sc, ctx in combined if sc >= threshold]
 
     @overload
     def invoke(
@@ -176,9 +186,9 @@ class ReRankPipeline:
     ) -> list[str]:
         """
         Rerank contexts based on query.
-        :param query: The query to use for reranking evaluation.
-        :param contexts: The contexts to rerank.
-        :param threshold: Get contexts that are equal or higher than threshold value.
+        @param query: The query to use for reranking evaluation.
+        @param contexts: The contexts to rerank.
+        @param threshold: Get contexts that are equal or higher than threshold value.
         """
     
     @overload
@@ -187,10 +197,10 @@ class ReRankPipeline:
     ) -> list[_T]:
         """
         Rerank contexts based on query.
-        :param query: The query to use for reranking evaluation.
-        :param contexts: The contexts object.
-        :param threshold: Get contexts that are equal or higher than threshold value.
-        :param key: callback to use for getting fields from contexts object.
+        @param query: The query to use for reranking evaluation.
+        @param contexts: The contexts object.
+        @param threshold: Get contexts that are equal or higher than threshold value.
+        @param key: callback to use for getting fields from contexts object.
         """
 
     def invoke(
